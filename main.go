@@ -37,6 +37,8 @@ func (conf *RTSPConfig) OnEvent(event any) {
 			MulticastIPRange:  "224.1.0.0/16",
 			MulticastRTPPort:  8002,
 			MulticastRTCPPort: 8003,
+			ReadBufferCount:   8192,
+			WriteBufferCount:  8192,
 		}
 		if err := s.Start(); err != nil {
 			RTSPPlugin.Error("server start", zap.Error(err))
