@@ -1,6 +1,8 @@
 package rtsp
 
 import (
+	"runtime/debug"
+
 	"github.com/bluenviron/gortsplib/v3/pkg/formats"
 	"github.com/bluenviron/gortsplib/v3/pkg/media"
 	"github.com/bluenviron/mediacommon/pkg/codecs/mpeg4audio"
@@ -95,6 +97,11 @@ func (p *RTSPPublisher) SetTracks() error {
 }
 
 func (p *RTSPPublisher) OnPacket(m *media.Media, f formats.Format, pack *rtp.Packet) {
+	defer func() {
+		if err := recover(); err != nil {
+			p.Error("panic", zap.String("rtsp stream", p.Stream.Path), zap.ByteString("stack", debug.Stack()))
+		}
+	}()
 	if t, ok := p.Tracks[m]; ok {
 		t.WriteRTPPack(pack)
 	}
